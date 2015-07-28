@@ -1,0 +1,32 @@
+{
+  "name": "gulp-indexify",
+  "version": "0.0.1",
+  "description": "Robustly convert static html files into a form served without file extensions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phlogisticfugu/gulp-indexify.git"
+  },
+  "keywords": [
+    "gulpplugin"
+  ],
+  "author": "phlogisticfugu",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/phlogisticfugu/gulp-indexify/issues"
+  },
+  "homepage": "https://github.com/phlogisticfugu/gulp-indexify#readme",
+  "dependencies": {
+    "event-stream": "^3.3.1",
+    "extend": "^3.0.0",
+    "gulp-util": "^3.0.6"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "should": "^7.0.2",
+    "stream-assert-gulp": "^0.4.9"
+  }
+}
