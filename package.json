@@ -6,6 +6,9 @@
   "scripts": {
     "test": "node_modules/.bin/mocha"
   },
+  "engines" : {
+    "node" : ">=0.10"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/phlogisticfugu/gulp-indexify.git"
