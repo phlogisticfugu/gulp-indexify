@@ -1,6 +1,6 @@
 {
   "name": "gulp-indexify",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Robustly convert static html files into a form served without file extensions",
   "main": "index.js",
   "scripts": {
