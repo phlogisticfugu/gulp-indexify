@@ -53,29 +53,24 @@ module.exports = function(options) {
     );
     
     if (options.rewriteRelativeUrls) {
-      var contents = file.contents;
+      var contents = file.contents.toString();
       var urlRegexp = new RegExp(
         '(?:href|src)\s*=\s*["\'\\(]\\s*([\\w\\_\/\\.\\-]*\\.[a-zA-Z]+)([^\\)"\']*)\\s*[\\)"\']', 'gim');
       var absoluteUrlRegexp = /^(?:\/|https?\:\/\/)/;
       
-      if (Buffer.isBuffer(contents)) {
-        /*
-         * rewrite relative urls with an extra .. to keep things working for references
-         * to other files
-         */
-        contents = contents.toString();
+      /*
+       * rewrite relative urls with an extra .. to keep things working for references
+       * to other files
+       */
+      contents = contents.replace(urlRegexp, function(content, filePath) {
+        if (! absoluteUrlRegexp.test(filePath)) {
+          content = content.replace(filePath, '../' + filePath);
+        }
         
-        contents = contents.replace(urlRegexp, function(content, filePath) {
-          
-          if (! absoluteUrlRegexp.test(content)) {
-            content = content.replace(filePath, '../' + filePath);
-          }
-          
-          return content;
-        })
-        
-        file.contents = new Buffer(contents);
-      }
+        return content;
+      })
+      
+      file.contents = new Buffer(contents);
     }
     
     return callback(null, file);
