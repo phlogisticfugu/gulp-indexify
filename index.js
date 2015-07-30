@@ -5,6 +5,7 @@ var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var extend = require('extend');
 var path = require('path');
+var parseFilePath = require('parse-filepath');
 
 module.exports = function(options) {
   options = extend(false, {
@@ -24,9 +25,9 @@ module.exports = function(options) {
 			return callback();
 		}
     
-    var parsedPathObj = path.parse(file.path);
+    var parsedPathObj = parseFilePath(file.path);
     
-    if (parsedPathObj.ext !== options.fileExtension) {
+    if (parsedPathObj.extname !== options.fileExtension) {
       /*
        * Skip/pass-through files that don't match our extension
        */
@@ -34,7 +35,7 @@ module.exports = function(options) {
     }
 
     file.path = path.join(
-      parsedPathObj.dir,
+      parsedPathObj.dirname,
       parsedPathObj.name,
       'index' + options.fileExtension
     );
