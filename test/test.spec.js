@@ -124,7 +124,11 @@ describe('gulp-indexify', function() {
       .pipe(assert.first(function(file) {
         var htmlContents = file.contents.toString();
         
+        // changes directory for css
         htmlContents.should.containEql('../css/style.css');
+        
+        // does not change directory for absolute url
+        htmlContents.should.containEql('href="https://maxcdn.bootstrapcdn.com');
       }))
       .on('end',done)
       ;
