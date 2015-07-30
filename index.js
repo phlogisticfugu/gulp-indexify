@@ -6,17 +6,29 @@ var PluginError = gutil.PluginError;
 var extend = require('extend');
 var path = require('path');
 var parseFilePath = require('parse-filepath');
+var util = require('util');
+
+function isString(s) {
+	if (s === undefined || s === null) return false;
+	return s.constructor===String;
+}
 
 module.exports = function(options) {
+  
   options = extend(false, {
     fileExtension: '.html',
     rewriteRelativeUrls: true
   }, options);
   
+  var fileExtensionArray = options.fileExtension;
+  
+  if (! util.isArray(fileExtensionArray) && isString(fileExtensionArray)) {
+    fileExtensionArray = [fileExtensionArray];
+  }
+  
   return eventStream.map(function(file, callback) {
 
     if (file.isNull()) {
-      this.push(file);
       return callback();
     }
     
@@ -27,7 +39,7 @@ module.exports = function(options) {
     
     var parsedPathObj = parseFilePath(file.path);
     
-    if (parsedPathObj.extname !== options.fileExtension) {
+    if (-1 === fileExtensionArray.indexOf(parsedPathObj.extname)) {
       /*
        * Skip/pass-through files that don't match our extension
        */
@@ -37,7 +49,7 @@ module.exports = function(options) {
     file.path = path.join(
       parsedPathObj.dirname,
       parsedPathObj.name,
-      'index' + options.fileExtension
+      'index' + parsedPathObj.extname
     );
     
     if (options.rewriteRelativeUrls) {

@@ -89,6 +89,30 @@ describe('gulp-indexify', function() {
       .on('end',done)
       ;
     });
+    
+    it('should accept arrays of extensions', function(done) {
+      gulp.src([
+        path.join(fixturesDir, 'about.html'),
+        path.join(fixturesDir, 'legacy.php'),
+        path.join(fixturesDir, 'README.txt')
+      ])
+      .pipe(indexify({
+        fileExtension: ['.html', '.php']
+      }))
+      .pipe(assert.nth(1, function(file) {
+        path.dirname(file.path).should.endWith('about');
+        path.basename(file.path).should.equal('index.html');
+      }))
+      .pipe(assert.nth(2, function(file) {
+        path.dirname(file.path).should.endWith('legacy');
+        path.basename(file.path).should.equal('index.php');
+      }))
+      .pipe(assert.nth(3, function(file) {
+        path.basename(file.path).should.equal('README.txt');
+      }))
+      .on('end',done)
+      ;
+    });
   });
   
   describe('rewriteRelativeUrls option', function() {
