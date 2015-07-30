@@ -4,7 +4,7 @@
   "description": "Robustly convert static html files into a form served without file extensions",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "gulp": "^3.9.0",
+    "mocha": "^2.2.5",
     "should": "^7.0.2",
     "stream-assert-gulp": "^0.4.9"
   }
