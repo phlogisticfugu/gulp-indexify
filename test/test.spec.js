@@ -65,6 +65,24 @@ describe('gulp-indexify', function() {
       .on('end',done)
       ;
     });
+
+    it('should not rename index.html', function(done) {
+      gulp.src([
+        path.join(fixturesDir, 'index.html'),
+        path.join(fixturesDir, 'about.html')
+      ])
+      .pipe(indexify({}))
+      .pipe(assert.nth(1, function(file) {
+        path.dirname(file.path).should.endWith('fixtures');
+        path.basename(file.path).should.equal('index.html');
+      }))
+      .pipe(assert.nth(2, function(file) {
+        path.dirname(file.path).should.endWith('about');
+        path.basename(file.path).should.equal('index.html');
+      }))
+      .on('end',done)
+      ;
+    });
   });
   
   describe('fileExtension option', function() {

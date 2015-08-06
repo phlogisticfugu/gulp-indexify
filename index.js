@@ -46,6 +46,13 @@ module.exports = function(options) {
       return callback(null, file);
     }
 
+    if ('index' === parsedPathObj.name) {
+      /*
+       * Skip/pass-through files which are already index files
+       */
+      return callback(null, file);
+    }
+
     file.path = path.join(
       parsedPathObj.dirname,
       parsedPathObj.name,
