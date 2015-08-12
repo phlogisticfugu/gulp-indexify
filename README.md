@@ -11,7 +11,7 @@ convert any of:
 - `http://site.com/about.aspx`
 
 into:
-> `http://site.com/about/` 
+- `http://site.com/about/` 
 
 by actually creating
 - `http://site.com/about/index.html`
