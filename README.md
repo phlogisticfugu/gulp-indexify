@@ -11,7 +11,7 @@ convert any of:
 - `http://site.com/about.aspx`
 
 into:
-> `http://site.com/about/``
+> `http://site.com/about/` 
 
 by actually creating
 - `http://site.com/about/index.html`
@@ -34,15 +34,14 @@ gulp
 })
 ```
 
-Options
--------
+# Options
 
 Options can be passed to *gulp-indexify*:
 ```javascript
 // ... code snippet from example
   return gulp.src(['src/**/*.html'])
   .pipe(indexify({
-    fileExtension: '.php',
+    fileExtension: ['.php','.html'],
     rewriteRelativeUrls: true
   }))
   .pipe(gulp.dest('dest'))
@@ -50,12 +49,42 @@ Options can be passed to *gulp-indexify*:
 // ... code snippet from example
 ```
 
-- __fileExtension__ - accepts a string or array representing the file
- extension(s) searched for when renaming files.  All other files without
- matching file extensions are ignored.  When the value is an array, it must be
- an array of strings.  Note that the dot must be included.  Default: `.html`
+## __fileExtension:__
+Accepts a string or array of strings representing the file
+ extension(s) for the files to rename.  When renaming, the file extension is preserved, just the base file name is changed to index.  Note that the dot for the file extension must be included.  Default: `.html`
 
-- __rewriteRelativeUrls__ - Since we are moving the HTML pages down a level in
+Example:
+```javascript
+fileExtension: '.about.aspx'
+```
+changes `about.aspx` into `about/index.aspx`.  But ignores `map.html`
+
+## __rewriteRelativeUrls:__
+Since we are moving the HTML pages down a level in
  the path, relative URLs in the HTML will need to be rewritten.  When this
  option is set to true that rewriting is done by `gulp-indexify`.  Default: `true`
 
+Example:
+
+When renaming `about.html` to `about/index.html`
+
+changes:
+```html
+  <link rel="stylesheet" type="text/css" href="assets/style.css">
+```
+
+into:
+```html
+  <link rel="stylesheet" type="text/css" href="../assets/style.css">
+```
+
+But leaves untouched/ignores:
+```html
+  <!-- root relative URLs -->
+  <link rel="stylesheet" type="text/css" href="/assets/default.css">
+
+  <!-- absolute URLs -->
+  <link rel="stylesheet" type="text/css"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+  >
+```
