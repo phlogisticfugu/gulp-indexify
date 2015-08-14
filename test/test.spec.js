@@ -156,6 +156,9 @@ describe('gulp-indexify', function() {
         
         // changes directory for image
         htmlContents.should.containEql('src="../images/100x100.png"');
+        
+        // shanges directory for responsive images
+        htmlContents.should.containEql('srcset="../images/100x100.png 1000w,../images/100x100.png 2000w"');
       }))
       .on('end',done)
       ;

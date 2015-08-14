@@ -62,21 +62,47 @@ module.exports = function(options) {
     
     if (options.rewriteRelativeUrls) {
       var contents = file.contents.toString();
-      var urlRegexp = new RegExp(
+			
+			/*
+			 * Match href="" and src="" URLs in the html
+			 */
+      var hrefSrcRegexp = new RegExp(
         '(?:href|src)\s*=\s*["\'\\(]\\s*([\\w\\_\/\\.\\-]*\\.[a-zA-Z]+)([^\\)"\']*)\\s*[\\)"\']', 'gim');
+				
+			/*
+			 * Match srcset urls
+			 */
+			var srcsetRegexp = new RegExp('srcset\s*=\s*["\'\\(]\\s*([^"\'\>"]+)\\s*[\\)"\']', 'gim');
       var absoluteUrlRegexp = /^(?:\/|https?\:\/\/)/;
       
       /*
        * rewrite relative urls with an extra .. to keep things working for references
        * to other files
        */
-      contents = contents.replace(urlRegexp, function(content, filePath) {
+      contents = contents.replace(hrefSrcRegexp, function(content, filePath) {
         if (! absoluteUrlRegexp.test(filePath)) {
           content = content.replace(filePath, '../' + filePath);
         }
         
         return content;
       });
+			
+			contents = contents.replace(srcsetRegexp, function(content, srcSetValue) {
+				var pathArray = srcSetValue.split(','),
+				i = pathArray.length,
+				path
+				;
+				
+				while(i--) {
+					path = pathArray[i].trim();
+					
+					if (! absoluteUrlRegexp.test(path)) {
+						content = content.replace(path, '../' + path);
+					}
+				}
+				
+				return content;
+			});
       
       file.contents = new Buffer(contents);
     }
