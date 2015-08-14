@@ -35,12 +35,14 @@ module.exports = function(options) {
       return callback();
     }
     
-    if (file.isStream()) {
-			this.emit('error', new PluginError(PLUGIN_NAME, 'Streams not currently supported'));
+    if (gutil.isStream(file)) {
+			this.emit('error',
+			  new PluginError(PLUGIN_NAME, 'Streams not currently supported'));
 			return callback();
 		}
     
-    var parsedPathObj = parseFilePath(file.path);
+		var originalFilePath = file.path;
+    var parsedPathObj = parseFilePath(originalFilePath);
     
     if (-1 === fileExtensionArray.indexOf(parsedPathObj.extname)) {
       /*
@@ -62,6 +64,10 @@ module.exports = function(options) {
       'index' + parsedPathObj.extname
     );
     
+		gutil.log(PLUGIN_NAME, 'renaming',
+		  gutil.colors.magenta(originalFilePath),
+			'to', gutil.colors.magenta(file.path));
+		
     if (options.rewriteRelativeUrls) {
       var contents = file.contents.toString();
 			
