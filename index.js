@@ -1,3 +1,4 @@
+/* jshint node:true */
 'use strict';
 
 var eventStream = require('event-stream');
@@ -75,7 +76,7 @@ module.exports = function(options) {
         }
         
         return content;
-      })
+      });
       
       file.contents = new Buffer(contents);
     }

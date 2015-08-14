@@ -1,3 +1,6 @@
+/* jshint node:true,mocha:true,expr:true */
+'use strict';
+
 var indexify = require('../index.js');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
@@ -134,19 +137,25 @@ describe('gulp-indexify', function() {
   });
   
   describe('rewriteRelativeUrls option', function() {
-    it('should rewrite relative urls', function(done) {
+    it('should rewrite relative href urls', function(done) {
       gulp.src(path.join(fixturesDir, 'about.html'))
       .pipe(indexify({
         rewriteRelativeUrls: true
       }))
       .pipe(assert.first(function(file) {
         var htmlContents = file.contents.toString();
-        
-        // changes directory for css
-        htmlContents.should.containEql('../css/style.css');
-        
+                
         // does not change directory for absolute url
         htmlContents.should.containEql('href="https://maxcdn.bootstrapcdn.com');
+        
+        // does not change directory for root-relative url
+        htmlContents.should.containEql('href="/css/base.css"');
+        
+        // changes directory for css
+        htmlContents.should.containEql('href="../css/style.css"');
+        
+        // changes directory for image
+        htmlContents.should.containEql('src="../images/100x100.png"');
       }))
       .on('end',done)
       ;
