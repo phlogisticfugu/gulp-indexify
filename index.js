@@ -1,7 +1,6 @@
 /* jshint node:true,esnext:true */
 'use strict';
 
-var eventStream = require('event-stream');
 var through2 = require('through2');
 var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
