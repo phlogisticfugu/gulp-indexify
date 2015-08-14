@@ -1,13 +1,16 @@
-/* jshint node:true */
+/* jshint node:true,esnext:true */
 'use strict';
 
 var eventStream = require('event-stream');
+var through2 = require('through2');
 var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var extend = require('extend');
 var path = require('path');
 var parseFilePath = require('parse-filepath');
 var util = require('util');
+
+var PLUGIN_NAME = 'gulp-indexify';
 
 function isString(s) {
 	if (s === undefined || s === null) return false;
@@ -27,14 +30,14 @@ module.exports = function(options) {
     fileExtensionArray = [fileExtensionArray];
   }
   
-  return eventStream.map(function(file, callback) {
+  return through2.obj(function(file, enc, callback) {
 
     if (file.isNull()) {
       return callback();
     }
     
     if (file.isStream()) {
-			this.emit('error', new PluginError('gulp-indexify', 'Streams not currently supported'));
+			this.emit('error', new PluginError(PLUGIN_NAME, 'Streams not currently supported'));
 			return callback();
 		}
     
