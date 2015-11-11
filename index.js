@@ -12,38 +12,38 @@ var util = require('util');
 var PLUGIN_NAME = 'gulp-indexify';
 
 function isString(s) {
-	if (s === undefined || s === null) return false;
-	return s.constructor===String;
+  if (s === undefined || s === null) return false;
+  return s.constructor === String;
 }
 
 module.exports = function(options) {
-  
+
   options = extend(false, {
     fileExtension: '.html',
     rewriteRelativeUrls: true
   }, options);
-  
+
   var fileExtensionArray = options.fileExtension;
-  
-  if (! util.isArray(fileExtensionArray) && isString(fileExtensionArray)) {
+
+  if (!util.isArray(fileExtensionArray) && isString(fileExtensionArray)) {
     fileExtensionArray = [fileExtensionArray];
   }
-  
+
   return through2.obj(function(file, enc, callback) {
 
     if (file.isNull()) {
       return callback();
     }
-    
+
     if (gutil.isStream(file)) {
-			this.emit('error',
-			  new PluginError(PLUGIN_NAME, 'Streams not currently supported'));
-			return callback();
-		}
-    
-		var originalFilePath = file.path;
+      this.emit('error',
+        new PluginError(PLUGIN_NAME, 'Streams not currently supported'));
+      return callback();
+    }
+
+    var originalFilePath = file.path;
     var parsedPathObj = parseFilePath(originalFilePath);
-    
+
     if (-1 === fileExtensionArray.indexOf(parsedPathObj.extname)) {
       /*
        * Skip/pass-through files that don't match our extension
@@ -63,58 +63,57 @@ module.exports = function(options) {
       parsedPathObj.name,
       'index' + parsedPathObj.extname
     );
-    
-		gutil.log(PLUGIN_NAME, 'renaming',
-		  gutil.colors.magenta(originalFilePath),
-			'to', gutil.colors.magenta(file.path));
-		
+
+    gutil.log(PLUGIN_NAME, 'renaming',
+      gutil.colors.magenta(originalFilePath),
+      'to', gutil.colors.magenta(file.path));
+
     if (options.rewriteRelativeUrls) {
       var contents = file.contents.toString();
-			
-			/*
-			 * Match href="" and src="" URLs in the html
-			 */
+
+      /*
+       * Match href="" and src="" URLs in the html
+       */
       var hrefSrcRegexp = new RegExp(
         '(?:href|src)\s*=\s*["\'\\(]\\s*([\\w\\_\/\\.\\-]*\\.[a-zA-Z]+)([^\\)"\']*)\\s*[\\)"\']', 'gim');
-				
-			/*
-			 * Match srcset urls
-			 */
-			var srcsetRegexp = new RegExp('srcset\s*=\s*["\'\\(]\\s*([^"\'\>"]+)\\s*[\\)"\']', 'gim');
+
+      /*
+       * Match srcset urls
+       */
+      var srcsetRegexp = new RegExp('srcset\s*=\s*["\'\\(]\\s*([^"\'\>"]+)\\s*[\\)"\']', 'gim');
       var absoluteUrlRegexp = /^(?:\/|https?\:\/\/)/;
-      
+
       /*
        * rewrite relative urls with an extra .. to keep things working for references
        * to other files
        */
       contents = contents.replace(hrefSrcRegexp, function(content, filePath) {
-        if (! absoluteUrlRegexp.test(filePath)) {
+        if (!absoluteUrlRegexp.test(filePath)) {
           content = content.replace(filePath, '../' + filePath);
         }
-        
+
         return content;
       });
-			
-			contents = contents.replace(srcsetRegexp, function(content, srcSetValue) {
-				var pathArray = srcSetValue.split(','),
-				i = pathArray.length,
-				path
-				;
-				
-				while(i--) {
-					path = pathArray[i].trim();
-					
-					if (! absoluteUrlRegexp.test(path)) {
-						content = content.replace(path, '../' + path);
-					}
-				}
-				
-				return content;
-			});
-      
+
+      contents = contents.replace(srcsetRegexp, function(content, srcSetValue) {
+        var pathArray = srcSetValue.split(','),
+          i = pathArray.length,
+          path;
+
+        while (i--) {
+          path = pathArray[i].trim();
+
+          if (!absoluteUrlRegexp.test(path)) {
+            content = content.replace(path, '../' + path);
+          }
+        }
+
+        return content;
+      });
+
       file.contents = new Buffer(contents);
     }
-    
+
     return callback(null, file);
   });
 };
